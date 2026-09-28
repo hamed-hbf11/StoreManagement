@@ -23,7 +23,6 @@ namespace StoreManagement
 
                 string choice = Console.ReadLine() ?? "";
 
-
                 switch (choice)
                 {
                     case "0":

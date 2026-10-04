@@ -49,6 +49,7 @@ namespace StoreManagement
             Console.WriteLine("    Product MANAGEMENT    ");
             Console.WriteLine("========================");
             Console.WriteLine("1. Add Product");
+            Console.WriteLine("2. Show Products");
             Console.WriteLine("0. Back to Main Menu");
             Console.WriteLine("========================");
             Console.Write("Select an Option: ");
@@ -59,6 +60,9 @@ namespace StoreManagement
             {
                 case "1":
                     AddProduct();
+                    break;
+                case "2":
+                    ShowProducts();
                     break;
                 case "0":
                     break;
@@ -85,12 +89,35 @@ namespace StoreManagement
             Console.Write("Category: ");
             string categoryProduct = Console.ReadLine() ?? "";
 
-            _productService.AddProduct(nameProduct, priceProduct,stockProduct,categoryProduct);
+            _productService.AddProduct(nameProduct, priceProduct, stockProduct, categoryProduct);
 
             Console.WriteLine("\nProduct Add Product");
             Console.WriteLine("press any key to continue...");
             Console.ReadLine();
-            
+        }
+
+        public static void ShowProducts()
+        {
+            Console.Clear();
+            Console.WriteLine(" === Show Products ===");
+
+            var products = _productService.GetAllProducts();
+            if (products.Count == 0)
+            {
+                Console.WriteLine("No products found!");
+            }
+            else
+            {
+                Console.WriteLine($"{"ID",-5} {"Name",-20} {"Price",-11} {"Stock",-8} {"Category"}");
+                Console.WriteLine(new string('-', 55));
+
+                foreach (var product in products)
+                {
+                    Console.WriteLine(product);
+                }
+            }
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadLine();
         }
     }
 }

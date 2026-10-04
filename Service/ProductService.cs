@@ -20,5 +20,10 @@ namespace StoreManagement
             _products.Add(product);
             return product;
         }
+
+        public List<Product> GetAllProducts()
+        {
+            return _products;
+        }
     }
 }

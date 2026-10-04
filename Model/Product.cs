@@ -10,7 +10,7 @@ namespace StoreManagement
 
         public override string ToString()
         {
-            return $"ID: {Id} | Name: {Name} | Price: {Price} | Stock: {Stock} | Category: {Category}";
+            return $"{Id,-5} {Name,-20} {Price,-10:F2} {Stock,-8} {Category}";
         }
     }
 }

@@ -25,5 +25,34 @@ namespace StoreManagement
         {
             return _products;
         }
+
+        public List<Product> SearchProduct(string query)
+        {
+            var result = new List<Product>();
+
+            foreach (var product in _products)
+            {
+                if (product.Name.ToLower().Contains(query.ToLower())
+                || product.Category.ToLower().Contains(query.ToLower()))
+                {
+                    result.Add(product);
+                }
+            }
+
+            return result;
+        }
+
+        public Product? GetProductById(int id)
+        {
+            foreach (var product in _products)
+            {
+                if (product.Id == id)
+                {
+                    return product;
+                }
+            }
+
+            return null;
+        }
     }
 }

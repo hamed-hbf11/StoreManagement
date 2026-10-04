@@ -54,5 +54,22 @@ namespace StoreManagement
 
             return null;
         }
+
+        public bool UpdateProduct(int id, string name, decimal price, int stock, string category)
+        {
+            Product? product = GetProductById(id);
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            product.Name = name;
+            product.Price = price;
+            product.Stock = stock;
+            product.Category = category;
+
+            return true;
+        }
     }
 }

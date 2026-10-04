@@ -51,6 +51,7 @@ namespace StoreManagement
             Console.WriteLine("1. Add Product");
             Console.WriteLine("2. Show Products");
             Console.WriteLine("3. Search Products");
+            Console.WriteLine("4. Edit Product");
             Console.WriteLine("0. Back to Main Menu");
             Console.WriteLine("========================");
             Console.Write("Select an Option: ");
@@ -67,6 +68,9 @@ namespace StoreManagement
                     break;
                 case "3":
                     SearchProducts();
+                    break;
+                case "4":
+                    EditProduct();
                     break;
                 case "0":
                     break;
@@ -155,6 +159,55 @@ namespace StoreManagement
             {
                 Console.WriteLine(product);
             }
+        }
+
+        public static void EditProduct()
+        {
+            Console.Clear();
+            Console.WriteLine(" === Edit Product ===");
+            Console.WriteLine("Enter Product ID to Edit: ");
+
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                Console.WriteLine("Invalid Product ID Format.");
+                Console.WriteLine("press Enter to Continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            Product? existingProduct = _productService.GetProductById(id);
+
+            if (existingProduct == null)
+            {
+                Console.WriteLine("Product with this ID not found.");
+                Console.WriteLine("press Enter to Continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine($"\nEditing Product: {existingProduct.Name}");
+            Console.WriteLine("----------------------------------");
+
+            Console.Write($"New Name (Current: {existingProduct.Name}): ");
+            string inputName = Console.ReadLine() ?? "";
+            string newName = string.IsNullOrWhiteSpace(inputName) ? existingProduct.Name : inputName;
+
+            Console.Write($"New Price (Current: {existingProduct.Price}): ");
+            string inputPrice = Console.ReadLine() ?? "";
+            decimal newPrice = decimal.TryParse(inputPrice, out decimal parsedPrice) ? parsedPrice : existingProduct.Price;
+
+            Console.Write($"New Stock (Current: {existingProduct.Stock}): ");
+            string inputStock = Console.ReadLine() ?? "";
+            int newStock = int.TryParse(inputStock, out int parsedStock) ? parsedStock : existingProduct.Stock;
+
+            Console.Write($"New Category (Current: {existingProduct.Category}): ");
+            string inputCategory = Console.ReadLine() ?? "";
+            string newCategory = string.IsNullOrWhiteSpace(inputCategory) ? existingProduct.Category : inputCategory;
+
+            _productService.UpdateProduct(id, newName, newPrice, newStock, newCategory);
+            Console.WriteLine("Product updated successfully.");
+            Console.WriteLine("press Enter to continue... ");
+            Console.ReadLine();
         }
     }
 }

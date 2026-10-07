@@ -1,4 +1,6 @@
 
+using StoreManagement.Model;
+
 namespace StoreManagement
 {
     public class ProductService

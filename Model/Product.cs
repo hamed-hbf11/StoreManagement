@@ -1,4 +1,4 @@
-namespace StoreManagement
+namespace StoreManagement.Model
 {
     public class Product
     {

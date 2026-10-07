@@ -1,11 +1,12 @@
-﻿using System;
-using System.Runtime.Intrinsics.Arm;
+﻿using StoreManagement.Model;
+using StoreManagement.Service;
 
 namespace StoreManagement
 {
     public class Program
     {
         private static readonly ProductService _productService = new ProductService();
+        private static readonly CartService _cartService = new CartService(_productService);
         public static void Main(string[] args)
         {
             bool isRunning = true;
@@ -29,6 +30,9 @@ namespace StoreManagement
                 {
                     case "1":
                         ProductMenu();
+                        break;
+                    case "2":
+                        CartMenu();
                         break;
                     case "0":
                         isRunning = false;
@@ -353,18 +357,121 @@ namespace StoreManagement
             Console.Write("Enter new stock quantity: ");
             string inputStock = Console.ReadLine() ?? "";
 
-            if(!int.TryParse(inputStock, out int newStock) || newStock < 0 || inputStock == product.Stock.ToString())
+            if (!int.TryParse(inputStock, out int newStock) || newStock < 0 || inputStock == product.Stock.ToString())
             {
                 Console.WriteLine("\nInvalid stock quantity. Stock cannot be negative");
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadLine();
                 return;
             }
-            
+
             _productService.UpdateStock(product.Id, newStock);
-            
+
             Console.WriteLine($"\nStock for '{product.Name}' updated to {newStock} successfully.");
             Console.WriteLine("press any key to continue...");
+            Console.ReadLine();
+        }
+
+        public static void CartMenu()
+        {
+            Console.WriteLine("=== Cart Menu ===");
+            Console.WriteLine("1. Add Product to Cart");
+            Console.WriteLine("2. View Cart");
+            Console.WriteLine("0. Back to Main Menu");
+            Console.Write("Enter your choice: ");
+            string choice = Console.ReadLine() ?? "";
+
+            switch (choice)
+            {
+                case "1":
+                    AddToCart();
+                    break;
+                case "2":
+                    ViewCart();
+                    break;
+                case "0":
+                    break;
+                default:
+                    Console.WriteLine("Invalid option! Please try again.");
+                    Console.ReadKey();
+                    break;
+
+            }
+        }
+        public static void AddToCart()
+        {
+            Console.Clear();
+            Console.WriteLine("=== Add to Cart ===");
+            Console.Write("Enter search term to find Product: ");
+            string query = Console.ReadLine() ?? "";
+
+            List<Product> results = _productService.SearchProduct(query);
+
+            if (results.Count == 0)
+            {
+                Console.WriteLine("No products found matching your search.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine($"\nAvailable products matching '{query}':");
+            PrintProductList(results);
+
+            Console.Write("\nEnter Product ID to add to cart: ");
+            if (!int.TryParse(Console.ReadLine(), out int productId))
+            {
+                Console.WriteLine("\nInvalid ID format");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.Write("Enter Quantity: ");
+            if (!int.TryParse(Console.ReadLine(), out int quantity) || quantity <= 0)
+            {
+                Console.WriteLine("\nInvalid quantity.");
+                Console.WriteLine("Press Enter to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            bool success = _cartService.AddToCart(productId, quantity);
+
+            if (success)
+                Console.WriteLine("\nItem successfully added to cart!");
+            else
+                Console.WriteLine("\nFailed to add to cart. Either Product ID doesn't exist or insufficient stock.");
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadLine();
+        }
+        public static void ViewCart()
+        {
+            Console.Clear();
+            Console.WriteLine("--- YOUR CART ---");
+
+            List<CartItem> items = _cartService.GetCartItems();
+
+            if (items.Count == 0)
+            {
+                Console.WriteLine("Your cart is empty.");
+            }
+            else
+            {
+                Console.WriteLine($"{"ID",-5} {"Name",-20} {"Price",-11} {"Qty",-8} {"Total"}");
+                Console.WriteLine(new string('-', 55));
+
+                foreach (var item in items)
+                {
+                    Console.WriteLine(item);
+                }
+
+                Console.WriteLine(new string('-', 55));
+                Console.WriteLine($"GRAND TOTAL: ${_cartService.GetCartTotal()}");
+            }
+
+            Console.WriteLine("\nPress Enter to continue...");
             Console.ReadLine();
         }
     }

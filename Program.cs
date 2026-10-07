@@ -53,6 +53,7 @@ namespace StoreManagement
             Console.WriteLine("3. Search Products");
             Console.WriteLine("4. Edit Product");
             Console.WriteLine("5. Delete Product");
+            Console.WriteLine("6. Update Stock");
             Console.WriteLine("0. Back to Main Menu");
             Console.WriteLine("========================");
             Console.Write("Select an Option: ");
@@ -75,6 +76,9 @@ namespace StoreManagement
                     break;
                 case "5":
                     DeleteProduct();
+                    break;
+                case "6":
+                    UpdateStock();
                     break;
                 case "0":
                     break;
@@ -288,6 +292,80 @@ namespace StoreManagement
             Console.WriteLine("Press any key to continue...");
             Console.ReadLine();
 
+        }
+        public static void UpdateStock()
+        {
+            Console.Clear();
+            Console.WriteLine("=== Update Product Stock ===");
+
+            Console.Write("Enter search term to find Product: ");
+            string query = Console.ReadLine() ?? "";
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                Console.WriteLine("\nSearch term cannot be empty.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            List<Product> results = _productService.SearchProduct(query);
+
+            if (results.Count == 0)
+            {
+                Console.WriteLine("\nNo Products found matching your search term.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine($"\nSearch Results for '{query}':");
+            PrintProductList(results);
+
+            Console.Write("\nEnter Product ID to Update stock:");
+            string inputId = Console.ReadLine() ?? "";
+
+            if (string.IsNullOrWhiteSpace(inputId))
+            {
+                Console.WriteLine("\nUpdate cancelled.");
+                Console.WriteLine("Press anu key to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            if (!int.TryParse(inputId, out int id))
+            {
+                Console.WriteLine("\nInvalid Product ID format.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            Product? product = _productService.GetProductById(id);
+            if (product == null)
+            {
+                Console.WriteLine("\nProduct with this ID was not found in the overall Product list");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine($"\nUpdating stock for '{product.Name}' (Current Stock: {product.Stock})");
+            Console.Write("Enter new stock quantity: ");
+            string inputStock = Console.ReadLine() ?? "";
+
+            if(!int.TryParse(inputStock, out int newStock) || newStock < 0 || inputStock == product.Stock.ToString())
+            {
+                Console.WriteLine("\nInvalid stock quantity. Stock cannot be negative");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadLine();
+                return;
+            }
+            
+            _productService.UpdateStock(product.Id, newStock);
+            
+            Console.WriteLine($"\nStock for '{product.Name}' updated to {newStock} successfully.");
+            Console.WriteLine("press any key to continue...");
+            Console.ReadLine();
         }
     }
 }

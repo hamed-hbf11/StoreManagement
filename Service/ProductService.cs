@@ -76,5 +76,15 @@ namespace StoreManagement
             _products.Remove(product);
             return true;
         }
+        public bool UpdateStock(int id, int newStock)
+        {
+            Product? product = GetProductById(id);
+
+            if (product == null)
+                return false;
+
+            product.Stock = newStock;
+            return true;
+        }
     }
 }

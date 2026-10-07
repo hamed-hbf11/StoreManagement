@@ -5,7 +5,6 @@ namespace StoreManagement
     {
         private int _nextId = 1;
         private readonly List<Product> _products = new List<Product>();
-
         public Product AddProduct(string nameProduct, decimal PriceProduct, int stockProduct, string categoryProduct)
         {
             Product product = new Product
@@ -20,12 +19,10 @@ namespace StoreManagement
             _products.Add(product);
             return product;
         }
-
         public List<Product> GetAllProducts()
         {
             return _products;
         }
-
         public List<Product> SearchProduct(string query)
         {
             var result = new List<Product>();
@@ -41,7 +38,6 @@ namespace StoreManagement
 
             return result;
         }
-
         public Product? GetProductById(int id)
         {
             foreach (var product in _products)
@@ -54,7 +50,6 @@ namespace StoreManagement
 
             return null;
         }
-
         public bool UpdateProduct(int id, string name, decimal price, int stock, string category)
         {
             Product? product = GetProductById(id);
@@ -69,6 +64,16 @@ namespace StoreManagement
             product.Stock = stock;
             product.Category = category;
 
+            return true;
+        }
+        public bool DeleteProduct(int id)
+        {
+            Product? product = GetProductById(id);
+
+            if (product == null)
+                return false;
+
+            _products.Remove(product);
             return true;
         }
     }

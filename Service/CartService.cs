@@ -15,7 +15,6 @@ namespace StoreManagement.Service
         {
             _productService = productService;
         }
-
         public List<CartItem> GetCartItems()
         {
             return _cartItems;
@@ -53,6 +52,17 @@ namespace StoreManagement.Service
         public void ClearCart()
         {
             _cartItems.Clear();
+        }
+        public bool RemoveFromCart(int productId)
+        {
+            CartItem? item = _cartItems.Find(i => i.Product.Id == productId);
+
+            if (item == null)
+                return false;
+
+            item.Product.Stock += item.Quantity;
+            _cartItems.Remove(item);
+            return true;
         }
     }
 }

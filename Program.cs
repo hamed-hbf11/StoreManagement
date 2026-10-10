@@ -7,6 +7,7 @@ namespace StoreManagement
     {
         private static readonly ProductService _productService = new ProductService();
         private static readonly CartService _cartService = new CartService(_productService);
+        private static readonly OrderService _orderService = new OrderService();
         public static void Main(string[] args)
         {
             bool isRunning = true;
@@ -33,6 +34,9 @@ namespace StoreManagement
                         break;
                     case "2":
                         CartMenu();
+                        break;
+                    case "3":
+                        OrderMenu();
                         break;
                     case "0":
                         isRunning = false;
@@ -374,9 +378,10 @@ namespace StoreManagement
 
         public static void CartMenu()
         {
+            Console.Clear();
             Console.WriteLine("=== Cart Menu ===");
             Console.WriteLine("1. Add Product to Cart");
-            Console.WriteLine("2. View Cart");
+            Console.WriteLine("2. View Cart & Checkout");
             Console.WriteLine("0. Back to Main Menu");
             Console.Write("Enter your choice: ");
             string choice = Console.ReadLine() ?? "";
@@ -448,17 +453,21 @@ namespace StoreManagement
         }
         public static void ViewCart()
         {
-            Console.Clear();
-            Console.WriteLine("--- YOUR CART ---");
-
-            List<CartItem> items = _cartService.GetCartItems();
-
-            if (items.Count == 0)
+            while (true)
             {
-                Console.WriteLine("Your cart is empty.");
-            }
-            else
-            {
+                Console.Clear();
+                Console.WriteLine("--- YOUR CART ---");
+
+                List<CartItem> items = _cartService.GetCartItems();
+
+                if (items.Count == 0)
+                {
+                    Console.WriteLine("Your cart is empty.");
+                    Console.WriteLine("\nPress Enter to return to Cart Menu...");
+                    Console.ReadLine();
+                    return;
+                }
+
                 Console.WriteLine($"{"ID",-5} {"Name",-20} {"Price",-11} {"Qty",-8} {"Total"}");
                 Console.WriteLine(new string('-', 55));
 
@@ -469,8 +478,53 @@ namespace StoreManagement
 
                 Console.WriteLine(new string('-', 55));
                 Console.WriteLine($"GRAND TOTAL: ${_cartService.GetCartTotal()}");
-            }
 
+                Console.WriteLine("\n1. Checkout (Complete Order)");
+                Console.WriteLine("0. Back");
+                Console.Write("Select option: ");
+                string choice = Console.ReadLine()?? "";
+
+                if(choice == "1")
+                {
+                    Order order = _orderService.CreateOrder(items,_cartService.GetCartTotal());
+                    _cartService.ClearCart();
+
+                    Console.WriteLine($"\nOrder #{order.Id} placed successfully!");
+                    Console.WriteLine("Press Enter to continue...");
+                    Console.ReadLine();
+                    return;
+                }
+                else if(choice == "0")
+                {
+                    return;
+                }
+            }
+        }
+
+        public static void OrderMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("--- ORDER MENU ---");
+
+            List<Order> orders = _orderService.GetAllOrders();
+
+            if (orders.Count == 0)
+            {
+                Console.WriteLine("No orders found.");
+            }
+            else
+            {
+                foreach (var order in orders)
+                {
+                    Console.WriteLine(order);
+                    Console.WriteLine("Items: ");
+                    foreach (var item in order.Items)
+                    {
+                        Console.WriteLine($"   - {item.Product.Name} x{item.Quantity} (${item.TotalPrice})");
+                    }
+                    Console.WriteLine(new string('-', 40));
+                }
+            }
             Console.WriteLine("\nPress Enter to continue...");
             Console.ReadLine();
         }

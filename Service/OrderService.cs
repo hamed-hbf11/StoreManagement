@@ -11,10 +11,15 @@ namespace StoreManagement.Service
         private readonly List<Order> _orders = new List<Order>();
         private int _nextOrderId = 1001;
 
-        public List<Order> GetAllOrders()
+        public OrderService(List<Order>? loadedOrders = null)
         {
-            return _orders;
+            if (loadedOrders != null && loadedOrders.Count > 0)
+            {
+                _orders = loadedOrders;
+                _nextOrderId = _orders.Max(o => o.Id) + 1;
+            }
         }
+        public List<Order> GetAllOrders() => _orders;
         public Order CreateOrder(List<CartItem> cartItems, decimal grandTotal)
         {
             List<CartItem> orderItems = new List<CartItem>();

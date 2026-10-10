@@ -10,6 +10,11 @@ namespace StoreManagement
         private static readonly OrderService _orderService = new OrderService();
         public static void Main(string[] args)
         {
+            var storageService = new StorageService();
+
+            var savedProducts = storageService.LoadData<List<Product>>("products.json");
+            var savedOrders = storageService.LoadData<List<Order>>("orders.json");
+
             bool isRunning = true;
 
             while (isRunning)
@@ -40,7 +45,10 @@ namespace StoreManagement
                         break;
                     case "0":
                         isRunning = false;
-                        Console.WriteLine("Goodbye!");
+                        storageService.SaveData("products.json", _productService.GetAllProducts());
+                        storageService.SaveData("orders.json", _orderService.GetAllOrders());
+
+                        Console.WriteLine("\nData saved successfully. Goodbye!");
                         break;
                     default:
                         Console.WriteLine("Invalid option! Please try again.");
@@ -482,11 +490,11 @@ namespace StoreManagement
                 Console.WriteLine("\n1. Checkout (Complete Order)");
                 Console.WriteLine("0. Back");
                 Console.Write("Select option: ");
-                string choice = Console.ReadLine()?? "";
+                string choice = Console.ReadLine() ?? "";
 
-                if(choice == "1")
+                if (choice == "1")
                 {
-                    Order order = _orderService.CreateOrder(items,_cartService.GetCartTotal());
+                    Order order = _orderService.CreateOrder(items, _cartService.GetCartTotal());
                     _cartService.ClearCart();
 
                     Console.WriteLine($"\nOrder #{order.Id} placed successfully!");
@@ -494,7 +502,7 @@ namespace StoreManagement
                     Console.ReadLine();
                     return;
                 }
-                else if(choice == "0")
+                else if (choice == "0")
                 {
                     return;
                 }

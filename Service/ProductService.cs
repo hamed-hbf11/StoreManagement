@@ -7,6 +7,14 @@ namespace StoreManagement
     {
         private int _nextId = 1;
         private readonly List<Product> _products = new List<Product>();
+        public ProductService(List<Product>? loadedProducts = null)
+        {
+            if (loadedProducts != null && loadedProducts.Count > 0)
+            {
+                _products = loadedProducts;
+                _nextId = _products.Max(p => p.Id) + 1;
+            }
+        }
         public Product AddProduct(string nameProduct, decimal PriceProduct, int stockProduct, string categoryProduct)
         {
             Product product = new Product

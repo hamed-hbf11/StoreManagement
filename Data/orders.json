@@ -1,0 +1,32 @@
+[
+  {
+    "Id": 1001,
+    "OrderDate": "2026-10-10T16:55:44.8482282+03:30",
+    "Items": [
+      {
+        "Product": {
+          "Id": 1,
+          "Name": "laptop asus",
+          "Price": 1000,
+          "Stock": 4,
+          "Category": "technologi"
+        },
+        "Quantity": 1,
+        "TotalPrice": 1000
+      },
+      {
+        "Product": {
+          "Id": 2,
+          "Name": "mouse",
+          "Price": 50,
+          "Stock": 18,
+          "Category": "technologi"
+        },
+        "Quantity": 2,
+        "TotalPrice": 100
+      }
+    ],
+    "TotalAmount": 1100,
+    "Status": "Completed"
+  }
+]
